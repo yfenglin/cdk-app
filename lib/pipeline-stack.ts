@@ -17,7 +17,7 @@ export class PipelineStack extends Stack {
     });
 
     // Basic pipline declaration. Sets the initial structure of pipeline
-    const pipeline = new CodePipeline(this, "IacPipelineProd", {
+    const pipelineProd = new CodePipeline(this, "IacPipelineProd", {
       pipelineName: "IacPipelineProd",
       synth: new CodeBuildStep("SynthStep", {
         input: CodePipelineSource.codeCommit(repo, "main"),
@@ -26,19 +26,19 @@ export class PipelineStack extends Stack {
       }),
     });
 
-    /*
-    // Basic pipline declaration. Sets the initial structure of pipeline
+    
     const pipelineDev = new CodePipeline(this, "PipelineDev", {
-      pipelineName: "WorkshopPipeline",
+      pipelineName: "PipelineDev",
       synth: new CodeBuildStep("SynthStep", {
         input: CodePipelineSource.codeCommit(repo, "dev"),
         installCommands: ["npm install -g aws-cdk"],
         commands: ["npm ci", "npm run build", "npx cdk synth"],
       }),
-    });*/
+    });
 
     const deploy = new IacPipelineStage(this, "Deploy");
-    const deployStage = pipeline.addStage(deploy);
+    const deployStageProd = pipelineProd.addStage(deploy);
+    const deployStageDev = pipelineDev.addStage(deploy);
     //const deployStageDev = pipelineDev.addStage(deploy);
 
     /*
