@@ -15,10 +15,10 @@ export class PipelineStack extends Stack {
     const repo = new codecommit.Repository(this, "IacAppRepo", {
       repositoryName: "IacAppRepo",
     });
-/*
+
     // Basic pipline declaration. Sets the initial structure of pipeline
-    const pipeline = new CodePipeline(this, "Pipeline", {
-      pipelineName: "WorkshopPipeline",
+    const pipeline = new CodePipeline(this, "IacPipelineProd", {
+      pipelineName: "IacPipelineProd",
       synth: new CodeBuildStep("SynthStep", {
         input: CodePipelineSource.codeCommit(repo, "main"),
         installCommands: ["npm install -g aws-cdk"],
@@ -26,6 +26,7 @@ export class PipelineStack extends Stack {
       }),
     });
 
+    /*
     // Basic pipline declaration. Sets the initial structure of pipeline
     const pipelineDev = new CodePipeline(this, "PipelineDev", {
       pipelineName: "WorkshopPipeline",
@@ -34,12 +35,12 @@ export class PipelineStack extends Stack {
         installCommands: ["npm install -g aws-cdk"],
         commands: ["npm ci", "npm run build", "npx cdk synth"],
       }),
-    });
+    });*/
 
     const deploy = new IacPipelineStage(this, "Deploy");
     const deployStage = pipeline.addStage(deploy);
-    const deployStageDev = pipelineDev.addStage(deploy);
-*/
+    //const deployStageDev = pipelineDev.addStage(deploy);
+
     /*
     deployStage.addPost(
       new CodeBuildStep("TestAPIGatewayEndpoint", {
