@@ -39,10 +39,9 @@ export class PipelineStack extends Stack {
     const deploy = new IacPipelineStage(this, "Deploy");
     const deployStageProd = pipelineProd.addStage(deploy);
     const deployStageDev = pipelineDev.addStage(deploy);
-    //const deployStageDev = pipelineDev.addStage(deploy);
 
     /*
-    deployStage.addPost(
+    deployStageProd.addPost(
       new CodeBuildStep("TestAPIGatewayEndpoint", {
         projectName: "TestAPIGatewayEndpoint",
         envFromCfnOutputs: {
