@@ -10,7 +10,7 @@ export class CdkIacAppStack extends Stack {
     const addAccount = new lambda.Function(this, "TestLambdaFunc", {
       runtime: lambda.Runtime.NODEJS_16_X,
       code: lambda.Code.fromAsset("lambda"),
-      handler: "addaccount.handler",
+      handler: "testlam.handler",
     });
 
     // Add accounts to Organization
