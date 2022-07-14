@@ -14,7 +14,7 @@ export class CdkIacAppStack extends Stack {
     });
 
     // Add accounts to Organization
-    //const addAccountsStack = new OrgActivitiesStack(this, "OrgActivitiesStack");
+    //const orgActivitiesStack = new OrgActivitiesStack(this, "OrgActivitiesStack");
 
   }
 }

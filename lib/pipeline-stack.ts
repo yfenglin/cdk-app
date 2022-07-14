@@ -36,9 +36,10 @@ export class PipelineStack extends Stack {
       }),
     });
 
-    const deploy = new IacPipelineStage(this, "Deploy");
-    const deployStageProd = pipelineProd.addStage(deploy);
-    const deployStageDev = pipelineDev.addStage(deploy);
+    const deployProd = new IacPipelineStage(this, "Deployment-prod");
+    const deployStageProd = pipelineProd.addStage(deployProd);
+    const deployDev = new IacPipelineStage(this, "Deployment-dev");
+    const deployStageDev = pipelineDev.addStage(deployDev);
 
     /*
     deployStageProd.addPost(
