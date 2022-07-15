@@ -16,7 +16,7 @@ export class PipelineStack extends Stack {
     const pipelineProd = new CodePipeline(this, "PipelineProd", {
       pipelineName: "PipelineProd",
       synth: new CodeBuildStep("SynthStep", {
-        input: CodePipelineSource.gitHub("yfenglin/cdk-app", "main"),
+        input: CodePipelineSource.gitHub("yjimmyl/cdk-app", "main"),
         installCommands: ["npm install -g aws-cdk"],
         commands: ["npm ci", "npm run build", "npx cdk synth"],
       }),
@@ -26,7 +26,7 @@ export class PipelineStack extends Stack {
     const pipelineDev = new CodePipeline(this, "PipelineDev", {
       pipelineName: "PipelineDev",
       synth: new CodeBuildStep("SynthStep", {
-        input: CodePipelineSource.gitHub("yfenglin/cdk-app", "dev"),
+        input: CodePipelineSource.gitHub("yjimmyl/cdk-app", "dev"),
         installCommands: ["npm install -g aws-cdk"],
         commands: ["npm ci", "npm run build", "npx cdk synth"],
       }),
