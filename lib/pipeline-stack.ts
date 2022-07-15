@@ -6,21 +6,17 @@ import {
   CodePipelineSource,
 } from "aws-cdk-lib/pipelines";
 import { Construct } from "constructs";
-import { IacPipelineStage } from "./pipeline-stage";
+import { PipelineStage } from "./pipeline-stage";
 
 export class PipelineStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const repo = new codecommit.Repository(this, "IacAppRepo", {
-      repositoryName: "IacAppRepo",
-    });
-
-    // Basic pipline declaration. Sets the initial structure of pipeline
-    const pipelineProd = new CodePipeline(this, "IacPipelineProd", {
-      pipelineName: "IacPipelineProd",
+    // Piplines declaration
+    const pipelineProd = new CodePipeline(this, "PipelineProd", {
+      pipelineName: "PipelineProd",
       synth: new CodeBuildStep("SynthStep", {
-        input: CodePipelineSource.codeCommit(repo, "main"),
+        input: CodePipelineSource.gitHub("yfenglin/cdk-app", "main"),
         installCommands: ["npm install -g aws-cdk"],
         commands: ["npm ci", "npm run build", "npx cdk synth"],
       }),
@@ -30,15 +26,16 @@ export class PipelineStack extends Stack {
     const pipelineDev = new CodePipeline(this, "PipelineDev", {
       pipelineName: "PipelineDev",
       synth: new CodeBuildStep("SynthStep", {
-        input: CodePipelineSource.codeCommit(repo, "dev"),
+        input: CodePipelineSource.gitHub("yfenglin/cdk-app", "dev"),
         installCommands: ["npm install -g aws-cdk"],
         commands: ["npm ci", "npm run build", "npx cdk synth"],
       }),
     });
 
-    const deployProd = new IacPipelineStage(this, "Deployment-prod");
+    // Add deployment stage to pipelines
+    const deployProd = new PipelineStage(this, "Deploy-prod");
     const deployStageProd = pipelineProd.addStage(deployProd);
-    const deployDev = new IacPipelineStage(this, "Deployment-dev");
+    const deployDev = new PipelineStage(this, "Deploy-dev");
     const deployStageDev = pipelineDev.addStage(deployDev);
 
     /*
