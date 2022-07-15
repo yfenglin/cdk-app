@@ -6,6 +6,6 @@ export class PipelineStage extends Stage {
 
   constructor(scope: Construct, id: string, props?: StageProps) {
     super(scope, id, props);
-    const stack = new CdkAppStack(this, "IacStack");
+    const stack = new CdkAppStack(this, "AppStack");
   }
 }
