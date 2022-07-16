@@ -86,5 +86,8 @@ export class OrgActivitiesStack extends Stack {
         physicalResourceId: cr.PhysicalResourceId.of(Date.now().toString()),
       },
     });
+
+    //lambdaTrigger.getResponseField("accCreateRes");
+    
   }
 }

@@ -5,7 +5,9 @@ exports.handler = async function (event) {
 
   console.log("Adding accounts:");
   const organizations = new AWS.Organizations();
-  let res = "";
+  let res = {
+    accCreateRes: []
+  };
 
   for (let i in event.emails) {
     const email = event.emails[i];
@@ -22,7 +24,7 @@ exports.handler = async function (event) {
             console.log("error:" + err, err.stack);
           } else {
             console.log("data: " + JSON.stringify(data));
-            res = res + JSON.stringify(data) + "\n";
+            res.accCreateRes.push(data);
           }
         }
       )
@@ -32,6 +34,6 @@ exports.handler = async function (event) {
   return {
     statusCode: 200,
     headers: { "Content-Type": "text/plain" },
-    body: "Accounts added to organization:\n" + res,
+    body: JSON.parse(res),
   };
 };
