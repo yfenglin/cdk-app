@@ -12,8 +12,8 @@ exports.handler = async function (event) {
 
   for (let i in OUs){
     var params = {
-        Name: OUs.Name,
-        ParentId: orgIds[OUs.ParentName],
+        Name: OUs[i].Name,
+        ParentId: orgIds[OUs[i].ParentName],
       };
 
     organizations.createOrganizationalUnit(params, function (err, data) {
@@ -21,7 +21,7 @@ exports.handler = async function (event) {
           console.log(err, err.stack);
         } else {
           console.log(JSON.stringify(data));
-          orgIds[OUs.Name] = data.OrganizationalUnit.Id;
+          orgIds[OUs[i].Name] = data.OrganizationalUnit.Id;
         }
       });
   }

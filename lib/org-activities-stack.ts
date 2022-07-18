@@ -53,7 +53,7 @@ export class OrgActivitiesStack extends Stack {
     });
 
     // OU creation
-    const orgCreationCR = new cr.AwsCustomResource(this, "AddOUTrigger", {
+    const orgCreationCR = new cr.AwsCustomResource(this, "CreateOUTrigger", {
       policy: cr.AwsCustomResourcePolicy.fromStatements([
         new iam.PolicyStatement({
           actions: ["lambda:InvokeFunction"],
