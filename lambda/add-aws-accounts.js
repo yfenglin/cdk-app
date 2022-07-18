@@ -3,7 +3,7 @@ const AWS = require("aws-sdk");
 exports.handler = async function (event) {
   console.log("request:", JSON.stringify(event, undefined, 2));
 
-  console.log("Adding accounts:");
+  console.log("Adding accounts");
   const organizations = new AWS.Organizations();
   let res = {
     accCreateRes: []
