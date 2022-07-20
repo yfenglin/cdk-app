@@ -8,15 +8,20 @@ export class OrgActivitiesStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    // Policy to allow adding acccounts to Organization
+    // Policy for modifying Organizations
     const orgPolicy = new iam.PolicyDocument({
       statements: [
         new iam.PolicyStatement({
           resources: ["*"],
-          actions: [
+          actions: [/*
             "organizations:CreateAccount",
             "organizations:DescribeOrganization",
+            "organizations:CreateOrganization",
+            "organizations:CreateOrganizationalUnit",
+            "organizations:DescribeCreateAccountStatus",
+            "organizations:MoveAccount",*/
             "iam:CreateServiceLinkedRole",
+            "organizations:*"
           ],
         }),
       ],
