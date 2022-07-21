@@ -1,4 +1,4 @@
-import { Duration, Stack, StackProps } from "aws-cdk-lib";
+import { CustomResource, Duration, Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as iam from "aws-cdk-lib/aws-iam";
@@ -13,7 +13,8 @@ export class OrgActivitiesStack extends Stack {
       statements: [
         new iam.PolicyStatement({
           resources: ["*"],
-          actions: [/*
+          actions: [
+            /*
             "organizations:CreateAccount",
             "organizations:DescribeOrganization",
             "organizations:CreateOrganization",
@@ -21,7 +22,7 @@ export class OrgActivitiesStack extends Stack {
             "organizations:DescribeCreateAccountStatus",
             "organizations:MoveAccount",*/
             "iam:CreateServiceLinkedRole",
-            "organizations:*"
+            "organizations:*",
           ],
         }),
       ],
@@ -37,9 +38,7 @@ export class OrgActivitiesStack extends Stack {
     });
 
     organizationsRole.addManagedPolicy(
-      iam.ManagedPolicy.fromAwsManagedPolicyName(
-        "service-role/AWSLambdaBasicExecutionRole"
-      )
+      iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
     );
 
     // Lambda function to add AWS accounts to Organization
@@ -57,7 +56,39 @@ export class OrgActivitiesStack extends Stack {
       role: organizationsRole, // Attach role
     });
 
+    const myProvider = new cr.Provider(this, "MyProvider", {
+      onEventHandler: createOU,
+    });
+
+    const orgCreationCR = new CustomResource(this, "CreateOUTrigger", {
+      serviceToken: myProvider.serviceToken,
+      properties: {
+        Payload: `{
+  "OrganizationRootId": "r-jsik",
+  "OrganizationalUnits": [
+    {
+      "Name": "Workload",
+      "ParentName": "Root"
+    },
+    {
+      "Name": "Network",
+      "ParentName": "Root"
+    },
+    {
+     "Name": "Prod",
+     "ParentName": "Workload"
+    },
+    {
+      "Name": "Dev",
+      "ParentName": "Workload"
+    }
+  ]
+}`,
+      },
+    });
+
     // OU creation
+    /*
     const orgCreationCR = new cr.AwsCustomResource(this, "CreateOUTrigger", {
       policy: cr.AwsCustomResourcePolicy.fromStatements([
         new iam.PolicyStatement({
@@ -131,6 +162,7 @@ export class OrgActivitiesStack extends Stack {
         physicalResourceId: cr.PhysicalResourceId.of(Date.now().toString()),
       },
     });
+    */
 
     /*
     // Custom Resources to call addAccount lambda function on Create
