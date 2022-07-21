@@ -59,7 +59,7 @@ export class OrgActivitiesStack extends Stack {
     const myProvider = new cr.Provider(this, "MyProvider", {
       onEventHandler: createOU,
     });
-
+/*
     const orgCreationCR = new CustomResource(this, "CreateOUTrigger", {
       serviceToken: myProvider.serviceToken,
       properties: {
@@ -87,8 +87,9 @@ export class OrgActivitiesStack extends Stack {
       },
     });
 
+    */
+
     // OU creation
-    /*
     const orgCreationCR = new cr.AwsCustomResource(this, "CreateOUTrigger", {
       policy: cr.AwsCustomResourcePolicy.fromStatements([
         new iam.PolicyStatement({
@@ -162,7 +163,8 @@ export class OrgActivitiesStack extends Stack {
         physicalResourceId: cr.PhysicalResourceId.of(Date.now().toString()),
       },
     });
-    */
+    
+    console.log(orgCreationCR.getResponseField("body"));
 
     /*
     // Custom Resources to call addAccount lambda function on Create
