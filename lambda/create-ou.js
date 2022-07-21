@@ -4,7 +4,7 @@ exports.handler = async function (event) {
   console.log("request:", JSON.stringify(event, undefined, 2));
   const organizations = new AWS.Organizations();
 
-  let orgIds = { Root: event.ResourceProperties.OrganizationRootId }; // Map org names to IDs
+  let orgIds = { Root: event.OrganizationRootId }; // Map org names to IDs
   const OUs = event.OrganizationalUnits; // Array of OUs
 
   for (let i in OUs) {
