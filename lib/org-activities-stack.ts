@@ -63,7 +63,7 @@ export class OrgActivitiesStack extends Stack {
     const orgCreationCR = new CustomResource(this, "CreateOUTrigger", {
       serviceToken: myProvider.serviceToken,
       properties: {
-        Payload: `{
+        OUConfig: `{
   "OrganizationRootId": "r-jsik",
   "OrganizationalUnits": [
     {
