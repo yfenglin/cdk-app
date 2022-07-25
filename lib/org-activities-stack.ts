@@ -8,7 +8,7 @@ export class OrgActivitiesStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    let OUConfig = {
+    let ouConfig = {
       OrganizationRootId: "r-jsik",
       OrganizationalUnits: [
         {
@@ -27,6 +27,21 @@ export class OrgActivitiesStack extends Stack {
           Name: "Dev",
           ParentName: "Workload",
         },
+      ],
+    };
+
+    let accountsConfig = {
+      Accounts: [
+        {
+          Email: "cheaplolrp@gmail.com",
+          Name: "Production Account 1",
+          OrganizationalUnit: "Dev"
+        },
+        {
+          Email: "cheaplol.rp@gmail.com",
+          Name: "addHandlerAccount",
+          OrganizationalUnit: "Prod"
+        }
       ],
     };
 
@@ -65,6 +80,7 @@ export class OrgActivitiesStack extends Stack {
     // Lambda function to add AWS accounts to Organization
     const addAccount = new lambda.Function(this, "AddAccountHandler", {
       runtime: lambda.Runtime.NODEJS_16_X,
+      timeout: Duration.minutes(2),
       code: lambda.Code.fromAsset("lambda"),
       handler: "add-aws-accounts.handler",
       role: organizationsRole, // Attach role
@@ -86,7 +102,8 @@ export class OrgActivitiesStack extends Stack {
     const orgCreationCR = new CustomResource(this, "CreateOUTrigger", {
       serviceToken: OUProvider.serviceToken,
       properties: {
-        OUConfig: OUConfig,
+        OUConfig: ouConfig,
+        AccountsConfig: accountsConfig
       },
     });
 
