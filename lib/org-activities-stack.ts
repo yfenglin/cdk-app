@@ -36,7 +36,6 @@ export class OrgActivitiesStack extends Stack {
         orgPolicy: orgPolicy,
       },
     });
-
     organizationsRole.addManagedPolicy(
       iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
     );
@@ -56,12 +55,14 @@ export class OrgActivitiesStack extends Stack {
       role: organizationsRole, // Attach role
     });
 
-    const myProvider = new cr.Provider(this, "MyProvider", {
+    // Provider that invokes OUHandler
+    const OUProvider = new cr.Provider(this, "OUProvider", {
       onEventHandler: createOU,
     });
-/*
+
+    // Custom Resource using provider
     const orgCreationCR = new CustomResource(this, "CreateOUTrigger", {
-      serviceToken: myProvider.serviceToken,
+      serviceToken: OUProvider.serviceToken,
       properties: {
         OUConfig: `{
   "OrganizationRootId": "r-jsik",
@@ -87,8 +88,10 @@ export class OrgActivitiesStack extends Stack {
       },
     });
 
-    */
+    // Values returned from the custom resource
+    const orgIds = orgCreationCR.getAtt("body").toString();
 
+    /*
     // OU creation
     const orgCreationCR = new cr.AwsCustomResource(this, "CreateOUTrigger", {
       policy: cr.AwsCustomResourcePolicy.fromStatements([
@@ -165,7 +168,7 @@ export class OrgActivitiesStack extends Stack {
     });
     
     console.log(orgCreationCR.getResponseField("body"));
-
+*/
     /*
     // Custom Resources to call addAccount lambda function on Create
     const accountCreationCR = new cr.AwsCustomResource(this, "AddAccountTrigger", {

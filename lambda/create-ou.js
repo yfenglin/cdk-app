@@ -4,33 +4,34 @@ exports.handler = async function (event) {
   console.log("request:", JSON.stringify(event, undefined, 2));
   const organizations = new AWS.Organizations();
 
-  let orgIds = { Root: event.OrganizationRootId }; // Map org names to IDs
-  const OUs = event.OrganizationalUnits; // Array of OUs
+  const props = event["ResourceProperties"];
+  const OUConfig = props["OUConfig"];
+  const OUsToCreate = OUConfig.OrganizationalUnits; // Array of OUs
+  let orgIds = { Root: OUConfig.OrganizationRootId }; // Map org names to IDs
 
-  for (let i in OUs) {
-    //console.log(OUs[i].Name + " parent: " + OUs[i].ParentName + " ParentId: " + orgIds[OUs[i].ParentName]);
+  let allErrors = { OUErrors: [] };
+
+  for (let i in OUsToCreate) {
+    console.log(
+      OUsToCreate[i].Name + " parent: " + OUsToCreate[i].ParentName + " ParentId: " + orgIds[OUsToCreate[i].ParentName]
+    );
+
     var params = {
-      Name: OUs[i].Name,
-      ParentId: orgIds[OUs[i].ParentName],
+      Name: OUsToCreate[i].Name,
+      ParentId: orgIds[OUsToCreate[i].ParentName],
     };
 
     try {
       const resp = await organizations.createOrganizationalUnit(params).promise();
-      orgIds[OUs[i].Name] = resp.OrganizationalUnit.Id; // Map new OU's ID to its name
+      orgIds[OUsToCreate[i].Name] = resp.OrganizationalUnit.Id; // Map new OU's ID to its name
     } catch (err) {
-        //if (err.code === "DuplicateOrganizationalUnitException")
-        
-      // Return with error
-      return {
-        statusCode: err.statusCode,
-        headers: { "Content-Type": "text/plain" },
-        body: {
-          message: err.message,
-          code: err.code,
-          requestId: err.requestId,
-          erroredOU: { Name: OUs[i].Name, ParentName: OUs[i].ParentName },
-        },
+      er = {
+        message: err.message,
+        code: err.code,
+        requestId: err.requestId,
+        erroredOU: { Name: OUsToCreate[i].Name, ParentName: OUsToCreate[i].ParentName },
       };
+      errors.OUErrors.concat(er); // Add error
     }
   }
 
@@ -38,6 +39,7 @@ exports.handler = async function (event) {
     statusCode: 200,
     headers: { "Content-Type": "text/plain" },
     body: orgIds,
+    errors: allErrors,
   };
 };
 
