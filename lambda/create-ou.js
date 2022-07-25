@@ -25,6 +25,8 @@ exports.handler = async function (event) {
       const resp = await organizations.createOrganizationalUnit(params).promise();
       orgIds[OUsToCreate[i].Name] = resp.OrganizationalUnit.Id; // Map new OU's ID to its name
     } catch (err) {
+      console.log(err, err.stack);
+
       er = {
         message: err.message,
         code: err.code,

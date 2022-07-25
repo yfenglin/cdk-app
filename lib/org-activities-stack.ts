@@ -8,6 +8,28 @@ export class OrgActivitiesStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
+    let OUConfig = {
+      OrganizationRootId: "r-jsik",
+      OrganizationalUnits: [
+        {
+          Name: "Workload",
+          ParentName: "Root",
+        },
+        {
+          Name: "Network",
+          ParentName: "Root",
+        },
+        {
+          Name: "Prod",
+          ParentName: "Workload",
+        },
+        {
+          Name: "Dev",
+          ParentName: "Workload",
+        },
+      ],
+    };
+
     // Policy for modifying Organizations
     const orgPolicy = new iam.PolicyDocument({
       statements: [
@@ -64,27 +86,7 @@ export class OrgActivitiesStack extends Stack {
     const orgCreationCR = new CustomResource(this, "CreateOUTrigger", {
       serviceToken: OUProvider.serviceToken,
       properties: {
-        OUConfig: `{
-  "OrganizationRootId": "r-jsik",
-  "OrganizationalUnits": [
-    {
-      "Name": "Workload",
-      "ParentName": "Root"
-    },
-    {
-      "Name": "Network",
-      "ParentName": "Root"
-    },
-    {
-     "Name": "Prod",
-     "ParentName": "Workload"
-    },
-    {
-      "Name": "Dev",
-      "ParentName": "Workload"
-    }
-  ]
-}`,
+        OUConfig: OUConfig,
       },
     });
 
