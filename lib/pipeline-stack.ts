@@ -8,7 +8,7 @@ export class PipelineStack extends Stack {
     super(scope, id, props);
 
     // Pipelines declaration
-    const pipelineProd = new CodePipeline(this, "PipelineProd", {
+    const pipelineProd = new CodePipeline(this, `CodePipeline${env}`, {
       pipelineName: `Pipeline${env}`,
       synth: new CodeBuildStep("Synth", {
         input: CodePipelineSource.connection("yjimmyl/cdk-app", branch, {
