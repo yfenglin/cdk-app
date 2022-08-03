@@ -11,43 +11,6 @@ export class OrgActivitiesStack extends Stack {
 
     const organizationConfig = JSON.parse(fs.readFileSync('./aws_config/organization.json', 'utf8'));
 
-    let ouConfig = {
-      OrganizationRootId: "r-jsik",
-      OrganizationalUnits: [
-        {
-          Name: "Workload",
-          ParentName: "Root",
-        },
-        {
-          Name: "Network",
-          ParentName: "Root",
-        },
-        {
-          Name: "Prod",
-          ParentName: "Workload",
-        },
-        {
-          Name: "Dev",
-          ParentName: "Workload",
-        },
-      ],
-    };
-
-    let accountsConfig = {
-      Accounts: [
-        {
-          Email: "cheaplolrp+prod1@gmail.com",
-          Name: "Prod Acc 1",
-          OrganizationalUnit: "Prod",
-        },
-        {
-          Email: "cheaplolrp+dev1@gmail.com",
-          Name: "Dev Acc 1",
-          OrganizationalUnit: "Dev",
-        },
-      ],
-    };
-
     // Policy for modifying Organizations
     const orgPolicy = new iam.PolicyDocument({
       statements: [
@@ -71,7 +34,7 @@ export class OrgActivitiesStack extends Stack {
     // Attach policies to role
     const organizationsRole = new iam.Role(this, "OrganizationsRole", {
       assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
-      description: "Allow adding acccounts to Organization",
+      description: "Allow modifying Organization",
       inlinePolicies: {
         orgPolicy: orgPolicy,
       },
@@ -102,144 +65,5 @@ export class OrgActivitiesStack extends Stack {
 
     // Values returned from the custom resource
     const orgFunction = orgCreationCR.getAtt("body").toString();
-
-    /*
-    // OU creation
-    const orgCreationCR = new cr.AwsCustomResource(this, "CreateOUTrigger", {
-      policy: cr.AwsCustomResourcePolicy.fromStatements([
-        new iam.PolicyStatement({
-          actions: ["lambda:InvokeFunction"],
-          effect: iam.Effect.ALLOW,
-          resources: [createOU.functionArn],
-        }),
-      ]),
-      timeout: Duration.minutes(15),
-      onCreate: {
-        service: "Lambda",
-        action: "invoke",
-        parameters: {
-          FunctionName: createOU.functionName,
-          InvocationType: "Event",
-          // Required: Provide Root organization id, declare parent OUs before their children
-          Payload: 
-          `{
-            "OrganizationRootId": "r-jsik",
-            "OrganizationalUnits": [
-              {
-                "Name": "Workload",
-                "ParentName": "Root"
-              },
-              {
-                "Name": "Network",
-                "ParentName": "Root"
-              },
-              {
-               "Name": "Prod",
-               "ParentName": "Workload"
-              },
-              {
-                "Name": "Dev",
-                "ParentName": "Workload"
-              }
-            ]
-          }`,
-        },
-        physicalResourceId: cr.PhysicalResourceId.of(Date.now().toString()),
-      },
-      onUpdate: {
-        service: "Lambda",
-        action: "invoke",
-        parameters: {
-          FunctionName: createOU.functionName,
-          InvocationType: "Event",
-          Payload:
-          `{
-            "OrganizationRootId": "r-jsik",
-            "OrganizationalUnits": [
-              {
-                "Name": "Workload",
-                "ParentName": "Root"
-              },
-              {
-                "Name": "Network",
-                "ParentName": "Root"
-              },
-              {
-               "Name": "Prod",
-               "ParentName": "Workload"
-              },
-              {
-                "Name": "Dev",
-                "ParentName": "Workload"
-              }
-            ]
-          }`,
-        },
-        physicalResourceId: cr.PhysicalResourceId.of(Date.now().toString()),
-      },
-    });
-    
-    console.log(orgCreationCR.getResponseField("body"));
-*/
-    /*
-    // Custom Resources to call addAccount lambda function on Create
-    const accountCreationCR = new cr.AwsCustomResource(this, "AddAccountTrigger", {
-      policy: cr.AwsCustomResourcePolicy.fromStatements([
-        new iam.PolicyStatement({
-          actions: ["lambda:InvokeFunction"],
-          effect: iam.Effect.ALLOW,
-          resources: [addAccount.functionArn],
-        }),
-      ]),
-      timeout: Duration.minutes(15),
-      onCreate: {
-        service: "Lambda",
-        action: "invoke",
-        parameters: {
-          FunctionName: addAccount.functionName,
-          InvocationType: "Event",
-          Payload: `{
-                  "emails": [
-                    "cheaplolrp@gmail.com",
-                    "cheaplol.rp@gmail.com"
-                  ]
-                }`,
-        },
-        physicalResourceId: cr.PhysicalResourceId.of(Date.now().toString()),
-      },
-      onUpdate: {
-        service: "Lambda",
-        action: "invoke",
-        parameters: {
-          FunctionName: addAccount.functionName,
-          InvocationType: "Event",
-          Payload: `{
-                  "emails": [
-                    "cheaplolrp@gmail.com",
-                    "cheaplol.rp@gmail.com"
-                  ]
-                }`,
-        },
-        physicalResourceId: cr.PhysicalResourceId.of(Date.now().toString()),
-      },
-    });
-
-    //lambdaTrigger.getResponseField("Payload.accCreateRes");
-
-    /*
-    const accountStatusCR = new cr.AwsCustomResource(this, 'API2', {
-  onCreate: {
-    service: '...',
-    action: '...',
-    parameters: {
-      text: accountCreationCR.getResponseField("Payload.accCreateRes");
-    },
-    physicalResourceId: cr.PhysicalResourceId.of('...'),
-  },
-  policy: cr.AwsCustomResourcePolicy.fromSdkCalls({
-    resources: cr.AwsCustomResourcePolicy.ANY_RESOURCE,
-  }),
-});
-    */
   }
 }
