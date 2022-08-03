@@ -3,10 +3,13 @@ import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as cr from "aws-cdk-lib/custom-resources";
+const fs = require('fs');
 
 export class OrgActivitiesStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
+
+    const organizationConfig = JSON.parse(fs.readFileSync('./aws_config/organization.json', 'utf8'));
 
     let ouConfig = {
       OrganizationRootId: "r-jsik",
@@ -33,15 +36,15 @@ export class OrgActivitiesStack extends Stack {
     let accountsConfig = {
       Accounts: [
         {
-          Email: "cheaplolrp@gmail.com",
-          Name: "Production Account 1",
-          OrganizationalUnit: "Dev"
+          Email: "cheaplolrp+prod1@gmail.com",
+          Name: "Prod Acc 1",
+          OrganizationalUnit: "Prod",
         },
         {
-          Email: "cheaplol.rp@gmail.com",
-          Name: "addHandlerAccount",
-          OrganizationalUnit: "Prod"
-        }
+          Email: "cheaplolrp+dev1@gmail.com",
+          Name: "Dev Acc 1",
+          OrganizationalUnit: "Dev",
+        },
       ],
     };
 
@@ -77,38 +80,28 @@ export class OrgActivitiesStack extends Stack {
       iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
     );
 
-    // Lambda function to add AWS accounts to Organization
-    const addAccount = new lambda.Function(this, "AddAccountHandler", {
+    // Lambda function to create OUs, add AWS accounts to Organization, and move those accounts to OUs
+    const createOrg = new lambda.Function(this, "CreateOrgHandler", {
       runtime: lambda.Runtime.NODEJS_16_X,
-      timeout: Duration.minutes(2),
+      timeout: Duration.minutes(10),
       code: lambda.Code.fromAsset("lambda"),
-      handler: "add-aws-accounts.handler",
-      role: organizationsRole, // Attach role
-    });
-
-    const createOU = new lambda.Function(this, "CreateOUHandler", {
-      runtime: lambda.Runtime.NODEJS_16_X,
-      code: lambda.Code.fromAsset("lambda"),
-      handler: "create-ou.handler",
+      handler: "create-org.handler",
       role: organizationsRole, // Attach role
     });
 
     // Provider that invokes OUHandler
-    const OUProvider = new cr.Provider(this, "OUProvider", {
-      onEventHandler: createOU,
+    const orgCreationProvider = new cr.Provider(this, "OrgCreationProvider", {
+      onEventHandler: createOrg,
     });
 
     // Custom Resource using provider
-    const orgCreationCR = new CustomResource(this, "CreateOUTrigger", {
-      serviceToken: OUProvider.serviceToken,
-      properties: {
-        OUConfig: ouConfig,
-        AccountsConfig: accountsConfig
-      },
+    const orgCreationCR = new CustomResource(this, "OrgCreationTrigger", {
+      serviceToken: orgCreationProvider.serviceToken,
+      properties: organizationConfig,
     });
 
     // Values returned from the custom resource
-    const orgIds = orgCreationCR.getAtt("body").toString();
+    const orgFunction = orgCreationCR.getAtt("body").toString();
 
     /*
     // OU creation

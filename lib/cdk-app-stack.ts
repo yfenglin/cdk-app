@@ -1,7 +1,6 @@
 import {OrgActivitiesStack} from "./org-activities-stack";
 import { Duration, Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import * as lambda from "aws-cdk-lib/aws-lambda";
 
 export class CdkAppStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {

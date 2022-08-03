@@ -1,0 +1,37 @@
+{
+  "OUConfig": {
+    "OrganizationRootId": "r-jsik",
+    "OrganizationalUnits": [
+      {
+        "ParentName": "Root",
+        "Name": "Workload"
+      },
+      {
+        "ParentName": "Root",
+        "Name": "Network"
+      },
+      {
+        "ParentName": "Workload",
+        "Name": "Prod"
+      },
+      {
+        "ParentName": "Workload",
+        "Name": "Dev"
+      }
+    ]
+  },
+  "AccountsConfig": {
+    "Accounts": [
+      {
+        "Email": "cheaplolrp+prod3@gmail.com",
+        "Name": "Prod Acc 3",
+        "OrganizationalUnit": "Prod"
+      },
+      {
+        "Email": "cheaplolrp+dev3@gmail.com",
+        "Name": "Dev Acc 3",
+        "OrganizationalUnit": "Dev"
+      }
+    ]
+  }
+}
