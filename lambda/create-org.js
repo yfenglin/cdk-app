@@ -206,8 +206,15 @@ async function moveAccounts(organizations, accountsConfig, emailToAccountId, org
     const accountEmail = accounts[i].Email;
     const targetOUName = accounts[i].OrganizationalUnit;
     console.log(`Moving ${accountEmail} to ${targetOUName}`);
-    // All accounts will be in Root organization initially, so skip if target OU is Root
-    if (targetOUName === "Root") {
+    // No account ID, then skip
+    if (!emailToAccountId[accountEmail]) {
+      console.error("Skipping account as its account ID is missing. Account creation likely failed: could be that the account already existed.");
+      continue;
+    }
+
+    // All accounts will be in Root organization initially, so skip account if target OU is Root
+    if (!targetOUName || targetOUName === "Root") {
+      console.log("Skipping account as its to be moved to root.");
       continue;
     }
 
@@ -219,6 +226,7 @@ async function moveAccounts(organizations, accountsConfig, emailToAccountId, org
 
     try {
       const resp = await organizations.moveAccount(params).promise();
+      console.log(`${accountEmail} successfully moved to ${targetOUName}`);
     } catch (err) {
       err.AffectedAccount = accountEmail;
       console.log(err);
