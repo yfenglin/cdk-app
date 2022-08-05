@@ -8,3 +8,9 @@ new PipelineStack(app, "CdkAppPipelineStack", "Prod", "main", {
         region: 'us-east-1',
       }
 });
+/*
+new PipelineStack(app, "CdkAppPipelineStackDev", "Dev", "dev", {
+  env: {
+      region: 'us-east-1',
+    }
+});*/

@@ -3,13 +3,13 @@ import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as cr from "aws-cdk-lib/custom-resources";
-const fs = require('fs');
+const fs = require("fs");
 
 export class OrgActivitiesStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const organizationConfig = JSON.parse(fs.readFileSync('./aws_config/organization.json', 'utf8'));
+    const organizationConfig = JSON.parse(fs.readFileSync("./aws_config/organization.json", "utf8"));
 
     // Policy for modifying Organizations
     const orgPolicy = new iam.PolicyDocument({
@@ -17,15 +17,14 @@ export class OrgActivitiesStack extends Stack {
         new iam.PolicyStatement({
           resources: ["*"],
           actions: [
-            /*
             "organizations:CreateAccount",
-            "organizations:DescribeOrganization",
-            "organizations:CreateOrganization",
             "organizations:CreateOrganizationalUnit",
+            "organizations:DescribeOrganization",
+            "organizations:DescribeOrganizationalUnit",
             "organizations:DescribeCreateAccountStatus",
-            "organizations:MoveAccount",*/
+            "organizations:ListOrganizationalUnitsForParent",
+            "organizations:MoveAccount",
             "iam:CreateServiceLinkedRole",
-            "organizations:*",
           ],
         }),
       ],

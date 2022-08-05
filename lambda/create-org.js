@@ -32,6 +32,7 @@ exports.handler = async function (event) {
   let moveAccountErrors = await moveAccounts(organizations, accountsConfig, emailToAccountId, orgNameToId);
   allErrors.MoveAccountErrors = moveAccountErrors;
 
+  console.log({ results: allResults, errors: allErrors });
   return {
     Data: {
       statusCode: 200,
@@ -42,6 +43,11 @@ exports.handler = async function (event) {
   };
 };
 
+/**
+ * Creates OUs in Organizations
+ * @param organizations AWS Organizations object
+ * @param OUConfig JSON specifying OUs and their parents
+ */
 async function createOU(organizations, OUConfig) {
   const OUsToCreate = OUConfig.OrganizationalUnits; // Array of OUs
   let orgNameToId = { Root: OUConfig.OrganizationRootId }; // Map org names to IDs
@@ -99,6 +105,12 @@ async function createOU(organizations, OUConfig) {
   };
 }
 
+/**
+ * Create requests to add AWS accounts under Root.
+ * This function only submits requests, but doesn't wait for them to be completed.
+ * @param organizations AWS Organizations object
+ * @param accountsConfig JSON specifying account emails and their target OUs
+ */
 async function addAccounts(organizations, accountsConfig) {
   const accountsToAdd = accountsConfig.Accounts; // Array of accounts to add
   let addAccountStatuses = [];
@@ -119,6 +131,7 @@ async function addAccounts(organizations, accountsConfig) {
       resp.CreateAccountStatus.Email = accountEmail;
       addAccountStatuses.push(resp.CreateAccountStatus);
     } catch (err) {
+      err.AffectedAccount = accountEmail;
       console.log(err);
       addAccountStatuses.push(err);
     }
@@ -127,13 +140,14 @@ async function addAccounts(organizations, accountsConfig) {
   return { addAccountStatuses, addAccountErrors };
 }
 
-/*
- Go through each request one by one
- Check every minute if a request succeeded or failed
- If it did, check the next
- Total of 5 minutes for all requests to be successful
- Wait up to 5 minutes for one request to be successful but check all requests eventually (1 loop)
-*/
+/**
+ * Checks creation status of AWS accounts.
+ * Gives a total of X seconds (sleepTimeLeft) for all requests to be successful.
+ * Repeatedly checks one request every 20 seconds until it is completed,
+ * but will eventually check all requests after X minutes.
+ * @param organizations AWS Organizations object
+ * @param accountCreationRequests JSON array of account creation requests
+ */
 async function accountCreationStatus(organizations, accountCreationRequests) {
   let accountCreationStatuses = [];
   let accountCreationErrors = [];
@@ -143,7 +157,7 @@ async function accountCreationStatus(organizations, accountCreationRequests) {
   // Check account creation statuses
   for (let i = 0; i < accountCreationRequests.length; i++) {
     const requestId = accountCreationRequests[i].Id;
-    const accEmail = accountCreationRequests[i].Email;
+    const accountEmail = accountCreationRequests[i].Email;
 
     let params = {
       CreateAccountRequestId: requestId,
@@ -153,7 +167,7 @@ async function accountCreationStatus(organizations, accountCreationRequests) {
       const resp = await organizations.describeCreateAccountStatus(params).promise();
       console.log(JSON.stringify(resp));
       if (resp.CreateAccountStatus.State === "SUCCEEDED") {
-        emailToAccountId[accEmail] = resp.CreateAccountStatus.AccountId; // Map emails to IDs
+        emailToAccountId[accountEmail] = resp.CreateAccountStatus.AccountId; // Map emails to IDs
         accountCreationStatuses.push(resp.CreateAccountStatus);
       } else if (resp.CreateAccountStatus.State === "IN_PROGRESS") {
         await sleep(20000); // Wait 20 seconds before trying again
@@ -163,10 +177,11 @@ async function accountCreationStatus(organizations, accountCreationRequests) {
         }
       } else {
         // Case where State === "FAILED"
-        resp.CreateAccountStatus.Email = accEmail; // Save email
+        resp.CreateAccountStatus.Email = accountEmail; // Save email
         accountCreationStatuses.push(resp.CreateAccountStatus);
       }
     } catch (err) {
+      err.AffectedAccount = accountEmail;
       console.log(err);
       accountCreationErrors.push(err);
     }
@@ -175,6 +190,14 @@ async function accountCreationStatus(organizations, accountCreationRequests) {
   return { emailToAccountId, accountCreationStatuses, accountCreationErrors };
 }
 
+/**
+ * Moves accounts to their OUs as specified in accountsConfig
+ * @param organizations AWS Organizations object
+ * @param accountsConfig JSON specifying account emails and their target OUs
+ * @param emailToAccountId Map of emails to account IDs
+ * @param orgNameToId Map of OU names to OU IDs
+ * @returns
+ */
 async function moveAccounts(organizations, accountsConfig, emailToAccountId, orgNameToId) {
   const accounts = accountsConfig.Accounts;
   let moveAccountErrors = [];
@@ -183,6 +206,10 @@ async function moveAccounts(organizations, accountsConfig, emailToAccountId, org
     const accountEmail = accounts[i].Email;
     const targetOUName = accounts[i].OrganizationalUnit;
     console.log(`Moving ${accountEmail} to ${targetOUName}`);
+    // All accounts will be in Root organization initially, so skip if target OU is Root
+    if (targetOUName === "Root") {
+      continue;
+    }
 
     var params = {
       AccountId: emailToAccountId[accountEmail],
@@ -193,6 +220,7 @@ async function moveAccounts(organizations, accountsConfig, emailToAccountId, org
     try {
       const resp = await organizations.moveAccount(params).promise();
     } catch (err) {
+      err.AffectedAccount = accountEmail;
       console.log(err);
       moveAccountErrors.push(err);
     }
@@ -201,7 +229,7 @@ async function moveAccounts(organizations, accountsConfig, emailToAccountId, org
   return moveAccountErrors;
 }
 
-// Sleep helper function
+// Helper function for pausing execution
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
