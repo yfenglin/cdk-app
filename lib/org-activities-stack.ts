@@ -6,6 +6,8 @@ import * as cr from "aws-cdk-lib/custom-resources";
 const fs = require("fs");
 
 export class OrgActivitiesStack extends Stack {
+  orgCreationBody: string;
+
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
@@ -63,6 +65,6 @@ export class OrgActivitiesStack extends Stack {
     });
 
     // Values returned from the custom resource
-    const orgFunction = orgCreationCR.getAtt("body").toString();
+    this.orgCreationBody = orgCreationCR.getAtt("body").toString();
   }
 }
