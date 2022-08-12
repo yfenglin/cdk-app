@@ -4,11 +4,13 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 
 export class NetworkingStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  vpc: ec2.Vpc;
+
+  constructor(scope: Construct, id: string, vpcName: string, cidr:string, props?: StackProps) {
     super(scope, id, props);
 
-    const networkVpc = new ec2.Vpc(this, "network-vpc", {
-      cidr: "10.0.0.0/16",
+    this.vpc = new ec2.Vpc(this, vpcName, {
+      cidr,
       natGateways: 1,
       maxAzs: 2,
       subnetConfiguration: [
@@ -33,34 +35,6 @@ export class NetworkingStack extends Stack {
           cidrMask: 24,
         },
       ],
-    });
-
-    const workloadVpc1 = new ec2.Vpc(this, "workload-vpc-1", {
-      cidr: "10.1.0.0/16",
-      natGateways: 1,
-      maxAzs: 2,
-    });
-
-    const workloadVpc2 = new ec2.Vpc(this, "workload-vpc-2", {
-      cidr: "10.2.0.0/16",
-      natGateways: 1,
-      maxAzs: 2,
-    });
-
-    const cfnVPCPeeringConnection = new ec2.CfnVPCPeeringConnection(this, "MyCfnVPCPeeringConnection", {
-      peerVpcId: workloadVpc1.vpcId,
-      vpcId: networkVpc.vpcId,
-/*
-      // the properties below are optional
-      peerOwnerId: "peerOwnerId",
-      peerRegion: "peerRegion",
-      peerRoleArn: "peerRoleArn",
-      tags: [
-        {
-          key: "key",
-          value: "value",
-        },
-      ],*/
     });
 
 /*

@@ -1,4 +1,4 @@
-import { Duration, Stack, StackProps } from "aws-cdk-lib";
+import { Stack, StackProps } from "aws-cdk-lib";
 import { CodePipeline, CodePipelineSource, CodeBuildStep } from "aws-cdk-lib/pipelines";
 import { Construct } from "constructs";
 import { PipelineStage } from "./pipeline-stage";
@@ -10,6 +10,7 @@ export class PipelineStack extends Stack {
     // Pipelines declaration
     const pipelineProd = new CodePipeline(this, `CodePipeline${env}`, {
       pipelineName: `Pipeline${env}`,
+      crossAccountKeys: true,
       synth: new CodeBuildStep("Synth", {
         input: CodePipelineSource.connection("yjimmyl/cdk-app", branch, {
           connectionArn:
