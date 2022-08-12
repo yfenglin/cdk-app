@@ -17,21 +17,21 @@ export class CdkAppStack extends Stack {
     const networkingStack = new NetworkingStack(this, "NetworkingStack", "network-vpc", "10.0.0.0/16", {
       env: {
         //account: "386541670073",
-        region: "ca-central-1",
+        //region: "ca-central-1",
       },
     });
 
     const workloadVpc1 = new BasicVpcStack(this, "WorkloadVpcStack1", "workload-vpc-1", "10.1.0.0/16", {
       env: {
         //account: "745290997975",
-        region: "ca-central-1",
+        //region: "ca-central-1",
       },
     });
 
     const workloadVpc2 = new BasicVpcStack(this, "WorkloadVpcStack2", "workload-vpc-2", "10.2.0.0/16", {
       env: {
         //account: "389681141134",
-        region: "ca-central-1",
+        //region: "ca-central-1",
       },
     });
 
