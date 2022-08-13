@@ -13,6 +13,13 @@ export class BasicVpcStack extends Stack {
       cidr,
       natGateways: 1,
       maxAzs: 2,
+      subnetConfiguration: [
+        {
+          name: "private-subnet-1",
+          subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+          cidrMask: 24,
+        },
+      ],
     });
   }
 }

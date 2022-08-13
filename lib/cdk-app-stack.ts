@@ -35,9 +35,11 @@ export class CdkAppStack extends Stack {
       },
     });
 
+    let vpcsStacks = [networkingStack, workloadVpc1, workloadVpc2];
+
     const cfnTransitGateway = new ec2.CfnTransitGateway(
       this,
-      "MyCfnTransitGateway",
+      "MyCDKCfnTransitGateway",
       /* all optional props  {
         amazonSideAsn: 123,
         associationDefaultRouteTableId: "associationDefaultRouteTableId",
@@ -59,10 +61,26 @@ export class CdkAppStack extends Stack {
       }*/
     );
 
-    const cfnTransitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(this, 'MyCfnTransitGatewayAttachment', {
+
+    /*let vpcsAttachments = [];
+    for (let i = 0; i < vpcsStacks.length; i++){
+    }*/
+    // Attach VPCs to the TGW
+    const networkTransitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(this, 'NetworkCfnTransitGatewayAttachment', {
       subnetIds: [networkingStack.vpc.publicSubnets[0].subnetId, networkingStack.vpc.publicSubnets[1].subnetId],
       transitGatewayId: cfnTransitGateway.attrId,
       vpcId: networkingStack.vpc.vpcId,
     });
+    const workload1TransitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(this, 'Workload1CfnTransitGatewayAttachment', {
+      subnetIds: [workloadVpc1.vpc.privateSubnets[0].subnetId],
+      transitGatewayId: cfnTransitGateway.attrId,
+      vpcId: workloadVpc1.vpc.vpcId,
+    });
+    const workload2TransitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(this, 'Workload2CfnTransitGatewayAttachment', {
+      subnetIds: [workloadVpc2.vpc.privateSubnets[0].subnetId],
+      transitGatewayId: cfnTransitGateway.attrId,
+      vpcId: workloadVpc2.vpc.vpcId,
+    });
+
   }
 }
