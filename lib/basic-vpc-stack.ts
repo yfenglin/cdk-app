@@ -15,6 +15,11 @@ export class BasicVpcStack extends Stack {
       maxAzs: 2,
       subnetConfiguration: [
         {
+          name: "public-subnet-1",
+          subnetType: ec2.SubnetType.PUBLIC,
+          cidrMask: 24,
+        },
+        {
           name: "private-subnet-1",
           subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
           cidrMask: 24,
