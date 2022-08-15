@@ -72,12 +72,12 @@ export class CdkAppStack extends Stack {
       vpcId: networkingStack.vpc.vpcId,
     });
     const workload1TransitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(this, 'Workload1CfnTransitGatewayAttachment', {
-      subnetIds: [workloadVpc1.vpc.privateSubnets[0].subnetId],
+      subnetIds: [workloadVpc1.vpc.publicSubnets[0].subnetId],
       transitGatewayId: cfnTransitGateway.attrId,
       vpcId: workloadVpc1.vpc.vpcId,
     });
     const workload2TransitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(this, 'Workload2CfnTransitGatewayAttachment', {
-      subnetIds: [workloadVpc2.vpc.privateSubnets[0].subnetId],
+      subnetIds: [workloadVpc2.vpc.publicSubnets[0].subnetId],
       transitGatewayId: cfnTransitGateway.attrId,
       vpcId: workloadVpc2.vpc.vpcId,
     });
