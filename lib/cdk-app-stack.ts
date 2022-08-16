@@ -43,7 +43,7 @@ export class CdkAppStack extends Stack {
         subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
       },
       engine: rds.DatabaseInstanceEngine.postgres({
-        version: rds.PostgresEngineVersion.VER_13_1,
+        version: rds.PostgresEngineVersion.VER_14_2,
       }),
       credentials: rds.Credentials.fromGeneratedSecret('postgres'),
       multiAz: false,
