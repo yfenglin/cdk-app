@@ -35,28 +35,5 @@ export class NetworkingStack extends Stack {
         },
       ],
     });
-
-/*
-    const table = new dynamodb.Table(this, id, {
-      billingMode: dynamodb.BillingMode.PROVISIONED,
-      readCapacity: 1,
-      writeCapacity: 1,
-      removalPolicy: RemovalPolicy.DESTROY,
-      partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
-      sortKey: { name: "createdAt", type: dynamodb.AttributeType.NUMBER },
-      pointInTimeRecovery: true, // Enables continuous backups
-    });
-
-    declare const vpc: ec2.Vpc;
-    const instance = new rds.DatabaseInstance(this, "Instance", {
-      engine: rds.DatabaseInstanceEngine.oracleSe2({ version: rds.OracleEngineVersion.VER_19_0_0_0_2020_04_R1 }),
-      // optional, defaults to m5.large
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.SMALL),
-      credentials: rds.Credentials.fromGeneratedSecret("syscdk"), // Optional - will default to 'admin' username and generated password
-      vpc,
-      vpcSubnets: {
-        subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
-      },
-    });*/
   }
 }

@@ -25,7 +25,6 @@ export class PipelineStack extends Stack {
     const deploy = new PipelineStage(this, `Deploy-${env}`);
     const deployStage = pipelineProd.addStage(deploy);
 
-
     /*
     deployStageProd.addPost(
       new CodeBuildStep("TestAPIGatewayEndpoint", {
