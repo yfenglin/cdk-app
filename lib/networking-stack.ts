@@ -10,7 +10,7 @@ export class NetworkingStack extends Stack {
 
     this.vpc = new ec2.Vpc(this, vpcName, {
       cidr,
-      natGateways: 1,
+      natGateways: 2,
       maxAzs: 2,
       subnetConfiguration: [
         {

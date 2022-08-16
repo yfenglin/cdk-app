@@ -19,7 +19,7 @@ export class CdkAppStack extends Stack {
     //let organizationsActivitiesResults = JSON.parse(orgActivitiesStack.orgCreationBody);
 
     // Network
-    const networkingStack = new NetworkingStack(this, "NetworkingStack", "network-vpc", "10.0.0.0/16", {
+    const networkingVpc = new NetworkingStack(this, "NetworkingStack", "network-vpc", "10.0.0.0/16", {
       env: {
         //account: "386541670073",
         //region: "ca-central-1",
@@ -42,7 +42,7 @@ export class CdkAppStack extends Stack {
 
     // 👇 create RDS instance
     const dbInstance = new rds.DatabaseInstance(this, "db-instance", {
-      vpc: networkingStack.vpc,
+      vpc: networkingVpc.vpc,
       vpcSubnets: {
         subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
       },
@@ -63,7 +63,7 @@ export class CdkAppStack extends Stack {
       publiclyAccessible: false,
     });
 
-    let vpcsStacks = [networkingStack, workloadVpc1, workloadVpc2];
+    let vpcsStacks = [networkingVpc, workloadVpc1, workloadVpc2];
 
     const cfnTransitGateway = new ec2.CfnTransitGateway(
       this,
@@ -97,9 +97,9 @@ export class CdkAppStack extends Stack {
       this,
       "NetworkCfnTransitGatewayAttachment",
       {
-        subnetIds: [networkingStack.vpc.publicSubnets[0].subnetId, networkingStack.vpc.publicSubnets[1].subnetId],
+        subnetIds: [networkingVpc.vpc.publicSubnets[0].subnetId, networkingVpc.vpc.publicSubnets[1].subnetId],
         transitGatewayId: cfnTransitGateway.attrId,
-        vpcId: networkingStack.vpc.vpcId,
+        vpcId: networkingVpc.vpc.vpcId,
       }
     );
     const workload1TransitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(
