@@ -1,9 +1,10 @@
 import { OrgActivitiesStack } from "./org-activities-stack";
 import { NetworkingStack } from "./networking-stack";
 import { BasicVpcStack } from "./basic-vpc-stack";
-import { Stack, StackProps } from "aws-cdk-lib";
+import { Duration, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as rds from "aws-cdk-lib/aws-rds";
 
 export class CdkAppStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -33,6 +34,29 @@ export class CdkAppStack extends Stack {
         //account: "389681141134",
         //region: "ca-central-1",
       },
+    });
+
+    // 👇 create RDS instance
+    const dbInstance = new rds.DatabaseInstance(this, 'db-instance', {
+      vpc: networkingStack.vpc,
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+      },
+      engine: rds.DatabaseInstanceEngine.postgres({
+        version: rds.PostgresEngineVersion.VER_13_1,
+      }),
+      credentials: rds.Credentials.fromGeneratedSecret('postgres'),
+      multiAz: false,
+      allocatedStorage: 100,
+      maxAllocatedStorage: 105,
+      allowMajorVersionUpgrade: false,
+      autoMinorVersionUpgrade: true,
+      backupRetention: Duration.days(0),
+      deleteAutomatedBackups: true,
+      removalPolicy: RemovalPolicy.DESTROY,
+      deletionProtection: false,
+      databaseName: 'cdkRDS',
+      publiclyAccessible: false,
     });
 
     let vpcsStacks = [networkingStack, workloadVpc1, workloadVpc2];
