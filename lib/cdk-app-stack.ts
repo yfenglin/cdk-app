@@ -95,6 +95,8 @@ export class CdkAppStack extends Stack {
           transitGatewayId: transitGateway.attrId,
         }
       );
+      transitGatewayAttachment.addDependsOn(transitGateway);
+
 /*
       // Default routes
       const workloadCfnRoute = new ec2.CfnRoute(this, `${vpcName}CfnRoute`, {
