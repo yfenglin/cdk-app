@@ -117,7 +117,7 @@ export class CdkAppStack extends Stack {
         let subnet = vpc.isolatedSubnets[y];
         const routeTableAssoc = new ec2.CfnSubnetRouteTableAssociation(
           this,
-          `${subnet.subnetId}_${routeTable.attrRouteTableId}`,
+          `routeTableAssoc-${vpcName}-subnet-${y}`,
           {
             subnetId: subnet.subnetId,
             routeTableId: routeTable.attrRouteTableId,
