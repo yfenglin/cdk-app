@@ -95,12 +95,13 @@ export class CdkAppStack extends Stack {
           transitGatewayId: transitGateway.attrId,
         }
       );
-
+/*
       // Default routes
       const workloadCfnRoute = new ec2.CfnRoute(this, `${vpcName}CfnRoute`, {
         routeTableId: routeTable.attrRouteTableId,
         destinationCidrBlock: cidr,
-      });
+        localGatewayId:
+      });*/
 
       // Route other traffic to network VPC through TGW
       const workloadCfnRouteTGW = new ec2.CfnRoute(this, `${vpcName}CfnRouteTGW`, {
@@ -123,6 +124,7 @@ export class CdkAppStack extends Stack {
         );
       }
     }
+
     /*
     const workload1TransitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(
       this,

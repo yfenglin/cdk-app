@@ -25,7 +25,7 @@ export class BasicVpcStack extends Stack {
         },
       ],
     });
-    this.routeTable = new ec2.CfnRouteTable(this.vpc, vpcName + "RouteTable", {
+    this.routeTable = new ec2.CfnRouteTable(this, vpcName + "RouteTable", {
       vpcId: this.vpc.vpcId,
     });
   }
