@@ -65,8 +65,6 @@ export class CdkAppStack extends Stack {
       publiclyAccessible: false,
     });
 
-    let vpcsStacks = [networkingVpc, workloadVpc1, workloadVpc2];
-
     const transitGateway = new ec2.CfnTransitGateway(this, "MainCfnTransitGateway");
 
     // Attach network VPC to the TGW
@@ -172,7 +170,5 @@ export class CdkAppStack extends Stack {
     });
     Workload2CfnRouteTGW.addDependsOn(transitGateway);
 */
-
-    // Replace default VPC route tables
   }
 }
