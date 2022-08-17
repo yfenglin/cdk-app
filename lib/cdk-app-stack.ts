@@ -112,6 +112,7 @@ export class CdkAppStack extends Stack {
         transitGatewayId: transitGateway.attrId,
       });
       workloadCfnRouteTGW.node.addDependency(transitGateway);
+      workloadCfnRouteTGW.addDependsOn(networkTransitGatewayAttachment); // VPC should be attached to TGW first
 
       // Associate new route table with VPC's subnets
       for (let y = 0; y < workloadVpcs[i].vpc.isolatedSubnets.length; y++) {
