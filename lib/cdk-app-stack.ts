@@ -109,7 +109,7 @@ export class CdkAppStack extends Stack {
         destinationCidrBlock: "10.0.0.0/8",
         transitGatewayId: transitGateway.attrId,
       });
-      workloadCfnRouteTGW.addDependsOn(transitGateway);
+      workloadCfnRouteTGW.node.addDependency(transitGateway);
 
       // Associate new route table with VPC's subnets
       for (let y = 0; y < workloadVpcs[i].vpc.isolatedSubnets.length; y++) {
