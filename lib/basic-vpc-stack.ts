@@ -28,7 +28,7 @@ export class BasicVpcStack extends Stack {
       vpcId: vpc.vpcId,
     });
 
-    const transitGatewayAttrId = Fn.importValue('tgwId');
+    const transitGatewayAttrId = 	"tgw-04295f91eb5aa8c5d"; // Fn.importValue('tgwId');
 
     // Attach VPC to the TGW
     const transitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(
