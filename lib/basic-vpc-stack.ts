@@ -49,8 +49,7 @@ export class BasicVpcStack extends Stack {
       destinationCidrBlock: "10.0.0.0/8",
       transitGatewayId: transitGatewayAttrId,
     });
-    //workloadCfnRouteTGW.addDependsOn(transitGateway);
-    //workloadCfnRouteTGW.addDependsOn(networkTransitGatewayAttachment); // VPC has to be attached to TGW first, else we get an error
+    workloadCfnRouteTGW.addDependsOn(transitGatewayAttachment); // VPC has to be attached to TGW first, else we get an error
 
     /*
   // Default routes
