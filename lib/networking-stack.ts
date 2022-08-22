@@ -38,7 +38,9 @@ export class NetworkingStack extends Stack {
     });
 
     // Our TGW for connecting VPCs
-    const transitGateway = new ec2.CfnTransitGateway(this, "MainCfnTransitGateway");
+    const transitGateway = new ec2.CfnTransitGateway(this, "MainCfnTransitGateway", {
+      autoAcceptSharedAttachments: "enable",
+    });
 
     // Attach Network VPC to the TGW
     const networkTransitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(
@@ -53,12 +55,12 @@ export class NetworkingStack extends Stack {
     networkTransitGatewayAttachment.addDependsOn(transitGateway);
 
     // Share TGW ID with RAM for use by workload accounts
-    const tgwArn = `arn:aws:ec2:${this.region}:${this.account}:transit-gateway/${transitGateway.attrId}`
+    const tgwArn = `arn:aws:ec2:${this.region}:${this.account}:transit-gateway/${transitGateway.attrId}`;
     new CfnResourceShare(this, "tgwRAMShare", {
       name: "networkTgwShare",
       allowExternalPrincipals: false,
       resourceArns: [tgwArn],
-      principals: ["745290997975", "389681141134"]
+      principals: ["745290997975", "389681141134"],
     });
 
     new CfnOutput(this, "tgwIdRef", {
