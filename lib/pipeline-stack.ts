@@ -8,7 +8,7 @@ export class PipelineStack extends Stack {
     super(scope, id, props);
 
     // Pipelines declaration
-    const pipelineProd = new CodePipeline(this, `CodePipeline${env}`, {
+    const pipeline = new CodePipeline(this, `CodePipeline${env}`, {
       pipelineName: `Pipeline${env}`,
       crossAccountKeys: true,
       synth: new CodeBuildStep("Synth", {
@@ -17,13 +17,13 @@ export class PipelineStack extends Stack {
             "arn:aws:codestar-connections:us-east-1:051075623756:connection/77a15bc1-f10e-4f80-98cd-9acbed5d781f",
         }),
         installCommands: ["npm install -g aws-cdk"],
-        commands: ["npm ci", "npm run build", "npx cdk synth"],
+        commands: ["npm ci", "npm run build", "npx cdk synth", "aws ram enable-sharing-with-aws-organization"],
       }),
     });
 
     // Add deployment stage to pipelines
     const deploy = new PipelineStage(this, `Deploy-${env}`);
-    const deployStage = pipelineProd.addStage(deploy);
+    const deployStage = pipeline.addStage(deploy);
 
     /*
     deployStageProd.addPost(
