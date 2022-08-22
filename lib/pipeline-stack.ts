@@ -24,20 +24,5 @@ export class PipelineStack extends Stack {
     // Add deployment stage to pipelines
     const deploy = new PipelineStage(this, `Deploy-${env}`);
     const deployStage = pipeline.addStage(deploy);
-
-    /*
-    deployStageProd.addPost(
-      new CodeBuildStep("TestAPIGatewayEndpoint", {
-        projectName: "TestAPIGatewayEndpoint",
-        envFromCfnOutputs: {
-          ENDPOINT_URL: deploy.hcEndpoint,
-        },
-        commands: [
-          "curl -Ssf $ENDPOINT_URL",
-          "curl -Ssf $ENDPOINT_URL/hello",
-          "curl -Ssf $ENDPOINT_URL/test",
-        ],
-      })
-    );*/
   }
 }
