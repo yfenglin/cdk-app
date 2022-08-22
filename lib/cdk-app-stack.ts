@@ -19,7 +19,6 @@ export class CdkAppStack extends Stack {
     const networkingVpc = new NetworkingStack(this, "NetworkingStack", "network-vpc", "10.0.0.0/16", {
       env: {
         account: "386541670073",
-        //region: "ca-central-1",
       },
     });
 
