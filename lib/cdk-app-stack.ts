@@ -10,7 +10,7 @@ export class CdkAppStack extends Stack {
     // Add and move accounts and OUs in AWS Organizations
     const orgActivitiesStack = new OrgActivitiesStack(this, "OrgActivitiesStack", {
       env: {
-        region: "us-east-1", // Set to us-east-1 since Organizations is global anyways and not available in ca-central-1
+        region: "us-east-1", // Set to us-east-1 since Organizations are not available in ca-central and changes are global anyways
       },
     });
     //let organizationsActivitiesResults = JSON.parse(orgActivitiesStack.orgCreationBody);
