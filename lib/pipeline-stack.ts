@@ -17,7 +17,7 @@ export class PipelineStack extends Stack {
             "arn:aws:codestar-connections:us-east-1:051075623756:connection/77a15bc1-f10e-4f80-98cd-9acbed5d781f",
         }),
         installCommands: ["npm install -g aws-cdk"],
-        commands: ["npm ci", "npm run build", "npx cdk synth", "aws ram enable-sharing-with-aws-organization"],
+        commands: ["npm ci", "npm run build", "npx cdk synth"],
       }),
     });
 
