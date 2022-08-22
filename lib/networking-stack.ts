@@ -56,7 +56,7 @@ export class NetworkingStack extends Stack {
     const tgwArn = `arn:aws:ec2:${this.region}:${this.account}:transit-gateway/${transitGateway.attrId}`
     new CfnResourceShare(this, "tgwRAMShare", {
       name: "networkTgwShare",
-      allowExternalPrincipals: false,
+      allowExternalPrincipals: true,
       resourceArns: [tgwArn],
       principals: ["745290997975", "389681141134"]
     });
