@@ -3,15 +3,13 @@ import { Construct } from "constructs";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 
 export class BasicVpcStack extends Stack {
-  constructor(
-    scope: Construct,
-    id: string,
-    vpcName: string,
-    cidr: string,
-    props?: StackProps
-  ) {
+  constructor(scope: Construct, id: string, vpcName: string, cidr: string, props?: StackProps) {
     super(scope, id, props);
 
+    // Hardcoded TGW id
+    const transitGatewayAttrId = "tgw-04295f91eb5aa8c5d";
+
+    // VPC with isolated subnet
     const vpc = new ec2.Vpc(this, vpcName, {
       cidr,
       maxAzs: 2,
@@ -24,13 +22,6 @@ export class BasicVpcStack extends Stack {
       ],
     });
 
-    const routeTable = new ec2.CfnRouteTable(this, vpcName + "RouteTable", {
-      vpcId: vpc.vpcId,
-    });
-
-    // Hardcoded TGW id
-    const transitGatewayAttrId = 	"tgw-04295f91eb5aa8c5d";
-
     // Attach VPC to the TGW
     const transitGatewayAttachment = new ec2.CfnTransitGatewayAttachment(
       this,
@@ -41,28 +32,24 @@ export class BasicVpcStack extends Stack {
         transitGatewayId: transitGatewayAttrId,
       }
     );
-    //transitGatewayAttachment.addDependsOn(transitGateway);
 
-    // Route other traffic to network VPC through TGW
+    // New route table
+    const routeTable = new ec2.CfnRouteTable(this, vpcName + "RouteTable", {
+      vpcId: vpc.vpcId,
+    });
+
+    // Route traffic to network VPC through TGW
     const workloadCfnRouteTGW = new ec2.CfnRoute(this, `${vpcName}CfnRouteTGW`, {
       routeTableId: routeTable.attrRouteTableId,
       destinationCidrBlock: "10.0.0.0/8",
       transitGatewayId: transitGatewayAttrId,
     });
-    workloadCfnRouteTGW.addDependsOn(transitGatewayAttachment); // VPC has to be attached to TGW first, else we get an error
-
-    /*
-  // Default routes
-  const workloadCfnRoute = new ec2.CfnRoute(this, `${vpcName}CfnRoute`, {
-    routeTableId: routeTable.attrRouteTableId,
-    destinationCidrBlock: cidr,
-    localGatewayId:
-  });*/
+    workloadCfnRouteTGW.addDependsOn(transitGatewayAttachment); // VPC has to be attached to TGW first, or else we get an error
 
     // Associate new route table with VPC's subnets
-    for (let y = 0; y < vpc.isolatedSubnets.length; y++) {
-      let subnet = vpc.isolatedSubnets[y];
-      const routeTableAssoc = new ec2.CfnSubnetRouteTableAssociation(this, `routeTableAssoc-${vpcName}-subnet-${y}`, {
+    for (let i = 0; i < vpc.isolatedSubnets.length; i++) {
+      let subnet = vpc.isolatedSubnets[i];
+      const routeTableAssoc = new ec2.CfnSubnetRouteTableAssociation(this, `routeTableAssoc-${vpcName}-subnet-${i}`, {
         subnetId: subnet.subnetId,
         routeTableId: routeTable.attrRouteTableId,
       });
