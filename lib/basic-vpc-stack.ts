@@ -7,7 +7,7 @@ export class BasicVpcStack extends Stack {
     super(scope, id, props);
 
     // Hardcoded TGW id
-    const transitGatewayAttrId = "tgw-04295f91eb5aa8c5d";
+    const transitGatewayAttrId = "tgw-084510df446343c62";
 
     // VPC with isolated subnet
     const vpc = new ec2.Vpc(this, vpcName, {
