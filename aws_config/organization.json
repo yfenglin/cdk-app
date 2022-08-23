@@ -12,7 +12,7 @@
       },
       {
         "ParentName": "Root",
-        "Name": "Demo"
+        "Name": "NewDemo"
       },
       {
         "ParentName": "Workload",
@@ -27,6 +27,11 @@
   "AccountsConfig": {
     "Accounts": [
       {
+        "Email": "cheaplolrp+demo2@gmail.com",
+        "Name": "Demo 2",
+        "OrganizationalUnit": "NewDemo"
+      },
+      {
         "Email": "cheaplolrp+prod3@gmail.com",
         "Name": "Prod Acc 3",
         "OrganizationalUnit": "Prod"
@@ -35,11 +40,6 @@
         "Email": "cheaplolrp+dev3@gmail.com",
         "Name": "Dev Acc 3",
         "OrganizationalUnit": "Dev"
-      },
-      {
-        "Email": "cheaplolrp+demo1@gmail.com",
-        "Name": "Demo 3",
-        "OrganizationalUnit": "Demo"
       }
     ]
   }
