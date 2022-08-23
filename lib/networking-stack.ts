@@ -52,7 +52,7 @@ export class NetworkingStack extends Stack {
         vpcId: networkVpc.vpcId,
       }
     );
-    networkTransitGatewayAttachment.addDependsOn(transitGateway); // VPC has to be attached to TGW first, or else we get an error
+    //networkTransitGatewayAttachment.addDependsOn(transitGateway);
 
     // Share TGW using RAM so it can be used by workload accounts
     const tgwArn = `arn:aws:ec2:${this.region}:${this.account}:transit-gateway/${transitGateway.attrId}`;

@@ -5,8 +5,8 @@ import { PipelineStage } from "./pipeline-stage";
 
 export class PipelineStack extends Stack {
   /**
-   * @param env Type of environment
-   * @param branch Name of git branch to associate with environment and integrate code from
+   * @param env Name of environment
+   * @param branch Name of git branch to integrate code from
    */
   constructor(scope: Construct, id: string, env: string, branch: string, props?: StackProps) {
     super(scope, id, props);
