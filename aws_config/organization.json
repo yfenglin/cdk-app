@@ -11,6 +11,10 @@
         "Name": "Network"
       },
       {
+        "ParentName": "Root",
+        "Name": "Demo"
+      },
+      {
         "ParentName": "Workload",
         "Name": "Prod"
       },
@@ -31,6 +35,11 @@
         "Email": "cheaplolrp+dev3@gmail.com",
         "Name": "Dev Acc 3",
         "OrganizationalUnit": "Dev"
+      },
+      {
+        "Email": "cheaplolrp+demo1@gmail.com",
+        "Name": "Demo 3",
+        "OrganizationalUnit": "Demo"
       }
     ]
   }
